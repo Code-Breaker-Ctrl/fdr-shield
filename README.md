@@ -1,7 +1,7 @@
 # AICTE FDR Shield 🛡️
 > **Automated Security Deposit & Fixed Deposit Receipt (FDR) Monitoring Platform**  
 > *Developed for Smart India Hackathon (SIH) 2026 | Problem Statement ID: 26265 | Theme: Smart Automation*  
-> *Team: Ctrl+Alt+Elite*
+> *Team: Flux*
 
 ---
 
