@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AICTE FDR Shield - Automated Multi-Channel Alert Dispatch Preview</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 32px 20px;
+      min-height: 100vh;
+    }
+    .header-bar {
+      max-width: 1200px;
+      margin: 0 auto 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 16px;
+    }
+    .header-title h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.5px;
+    }
+    .header-title p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .badge-pill {
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .preview-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .preview-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Column Cards */
+    .card-panel {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+    .panel-header {
+      padding: 14px 20px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* Email Container Styling (Exact AICTE Template from alertService.js) */
+    .email-wrapper {
+      padding: 24px;
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+    .email-container {
+      max-width: 580px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+    .email-header {
+      background-color: #1e40af;
+      color: #ffffff;
+      padding: 22px 24px;
+      text-align: center;
+    }
+    .email-header h1 {
+      margin: 0 0 4px 0;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .email-header p {
+      margin: 0;
+      font-size: 12px;
+      opacity: 0.92;
+    }
+    .alert-banner {
+      background-color: #dc2626;
+      color: #ffffff;
+      padding: 10px 16px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.8px;
+    }
+    .email-content {
+      padding: 24px;
+    }
+    .greeting {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+    .table-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+    }
+    .table-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13px;
+    }
+    .table-row:last-child {
+      border-bottom: none;
+    }
+    .label {
+      color: #64748b;
+      font-weight: 500;
+    }
+    .val {
+      color: #0f172a;
+      font-weight: 700;
+      text-align: right;
+    }
+    .btn {
+      display: block;
+      width: fit-content;
+      margin: 20px auto 10px auto;
+      background-color: #1e40af;
+      color: #ffffff !important;
+      padding: 10px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
+      text-align: center;
+    }
+    .email-footer {
+      background: #f8fafc;
+      padding: 16px;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* Mobile / SMS Preview */
+    .mobile-mockup {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .phone-bubble {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+    .bubble-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .sender-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .time-tag {
+      font-size: 11px;
+      color: #64748b;
+    }
+    .sms-body {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #e2e8f0;
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #f59e0b;
+    }
+    .whatsapp-bubble {
+      background: #075e54;
+      border-radius: 8px;
+      padding: 14px;
+      color: #ffffff;
+      font-size: 13px;
+      line-height: 1.5;
+      position: relative;
+    }
+    .wa-badge {
+      display: inline-block;
+      background: #128c7e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .wa-link {
+      color: #93c5fd;
+      text-decoration: underline;
+    }
+    .wa-footer {
+      font-size: 10px;
+      color: #a7f3d0;
+      text-align: right;
+      margin-top: 6px;
+    }
+    .channel-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h2>AICTE FDR Shield — Multi-Channel Escalation Engine</h2>
+      <p>Automated notification dispatch via Nodemailer (Email), MSG91 (SMS), and Twilio (WhatsApp)</p>
+    </div>
+    <div class="badge-pill">
+      Live Production Preview
+    </div>
+  </div>
+
+  <div class="preview-grid">
+    <!-- Left Column: Official AICTE Email Notification -->
+    <div class="card-panel">
+      <div class="panel-header">
+        <span class="status-dot"></span>
+        <span>CHANNEL 1: Official AICTE HTML Email (Nodemailer SMTP)</span>
+      </div>
+      <div class="email-wrapper">
+        <div class="email-container">
+          <div class="email-header">
+            <h1>ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</h1>
+            <p>Bureau of Regulation & Approval — AICTE FDR Shield Portal</p>
+          </div>
+          <div class="alert-banner">
+            ⚠️ REGULATORY NOTIFICATION: CRITICAL: 6 DAYS REMAINING
+          </div>
+          <div class="email-content">
+            <p class="greeting">Dear Nodal Officer / Authorized Signatory,</p>
+            <p style="font-size: 13px; line-height: 1.6; color: #334155;">
+              This is an automated regulatory notice regarding the security deposit / Fixed Deposit Receipt (FDR) lodged with AICTE for academic approval.
+            </p>
+
+            <div class="table-card">
+              <div class="table-row">
+                <span class="label">Institution Name</span>
+                <span class="val">Dronacharya College of Engineering</span>
+              </div>
+              <div class="table-row">
+                <span class="label">AICTE Permanent ID</span>
+                <span class="val">1-123456789</span>
+              </div>
+              <div class="table-row">
+                <span class="label">FDR Certificate Number</span>
+                <span class="val">SBI-FDR-2026-000101</span>
+              </div>
+              <div class="table-row">
+                <span class="label">Issuing Bank</span>
+                <span class="val">State Bank of India</span>
+              </div>
+              <div class="table-row">
+                <span class="label">FDR Deposit Amount</span>
+                <span class="val">₹25,00,000</span>
+              </div>
+              <div class="table-row">
+                <span class="label">Scheduled Maturity Date</span>
+                <span class="val">02 Nov 2026</span>
+              </div>
+            </div>
+
+            <p style="font-size: 12px; color: #475569; line-height: 1.5; margin-bottom: 14px;">
+              <strong style="color: #dc2626;">Action Required:</strong> Immediate renewal receipt or formal discharge clearance is required within 6 days to prevent automatic regulatory penalty escalation.
+            </p>
+
+            <a href="http://localhost:3000" class="btn">
+              Login to FDR Shield Portal
+            </a>
+          </div>
+          <div class="email-footer">
+            © 2026 AICTE FDR Shield. Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070.<br/>
+            This is an official system-generated notification. Please do not reply directly to this email.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Mobile SMS & WhatsApp Notifications -->
+    <div class="card-panel">
+      <div class="panel-header">
+        <span class="status-dot"></span>
+        <span>CHANNELS 2 & 3: Instant Mobile Dispatch (SMS & WhatsApp)</span>
+      </div>
+      <div class="mobile-mockup">
+
+        <!-- SMS Card -->
+        <div class="phone-bubble">
+          <div class="bubble-header">
+            <span class="sender-tag">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              GOV-AICTEG (MSG91 Flow)
+            </span>
+            <span class="time-tag">Today, 09:00 AM</span>
+          </div>
+          <div class="sms-body">
+            <strong>AICTE FDR Shield:</strong> FDR SBI-FDR-2026-000101 of Dronacharya College of Engg is Expiring in 6 days (02 Nov 2026). Submit renewal at https://fdr.aicte-india.org/renew
+          </div>
+          <div style="margin-top: 10px; display: flex; gap: 8px;">
+            <span class="channel-badge">⚡ Priority Gateway</span>
+            <span class="channel-badge">100% Delivery Tracked</span>
+          </div>
+        </div>
+
+        <!-- WhatsApp Card -->
+        <div class="phone-bubble" style="background: #111b21;">
+          <div class="bubble-header">
+            <span class="sender-tag" style="color: #25d366;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-5.46-4.45-9.92-9.91-9.92z"/></svg>
+              AICTE Verified Desk (Twilio)
+            </span>
+            <span class="time-tag">09:00 AM</span>
+          </div>
+          <div class="whatsapp-bubble">
+            <div class="wa-badge">Official AICTE Notice</div>
+            <p><strong>⚠️ FDR Renewal Alert</strong></p>
+            <p style="margin-top: 6px;">Institution: <em>Dronacharya College of Engg</em></p>
+            <p>FDR No: <strong>SBI-FDR-2026-000101</strong></p>
+            <p>Maturity: <strong>02 Nov 2026 (6 Days)</strong></p>
+            <p>Amount: <strong>₹25,00,000</strong></p>
+            <p style="margin-top: 8px;">Tap link to submit renewal: <a class="wa-link" href="#">https://fdr.aicte-india.org</a></p>
+            <div class="wa-footer">09:00 AM ✓✓</div>
+          </div>
+          <div style="margin-top: 10px; display: flex; gap: 8px;">
+            <span class="channel-badge" style="color: #25d366; border-color: rgba(37,211,102,0.3);">🟢 Verified WhatsApp Green Tick</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

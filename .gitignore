@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+*/node_modules/
+package-lock.json
+
+# Environment variables & secrets
+.env
+*/.env
+*.env.local
+
+# Production build outputs
+dist/
+*/dist/
+build/
+*/build/
+
+# Logs & temp files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Uploads
+uploads/
+*/uploads/
