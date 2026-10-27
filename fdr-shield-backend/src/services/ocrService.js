@@ -43,14 +43,16 @@ const safeFetchFilePart = async (fileUrl) => {
  */
 async function extractFDRData(fileUrl) {
   try {
+    const apiKey = process.env.VISION_AI_API_KEY || process.env.GEMINI_API_KEY;
     const hasValidKey =
-      process.env.GEMINI_API_KEY &&
-      process.env.GEMINI_API_KEY !== 'your_gemini_api_key' &&
-      process.env.GEMINI_API_KEY.startsWith('AIzaSy');
+      apiKey &&
+      apiKey !== 'your_gemini_api_key' &&
+      apiKey !== 'your_vision_api_key' &&
+      apiKey.startsWith('AIzaSy');
 
     const filePart = await safeFetchFilePart(fileUrl);
 
-    // If both real file and genuine API key are present, use live Gemini API
+    // If both real file and genuine API key are present, use live Vision AI extraction
     if (hasValidKey && filePart) {
       try {
         const model = genAI.getGenerativeModel({
@@ -89,8 +91,8 @@ If a field is not found, set it to null.`;
         else if (nonNullFieldCount >= 3) confidence = 'medium';
 
         return { extracted, confidence };
-      } catch (geminiError) {
-        console.warn('[GEMINI API WARNING] Call failed, using fallback OCR extraction:', geminiError.message);
+      } catch (ocrErr) {
+        console.warn('[VISION AI WARNING] Call failed, using fallback OCR extraction:', ocrErr.message);
       }
     }
 

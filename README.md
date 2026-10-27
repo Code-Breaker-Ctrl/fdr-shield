@@ -114,7 +114,7 @@ flowchart TD
 | **Frontend** | React 18, Vite, TypeScript, Tailwind CSS, Lucide Icons, Wouter, Sonner |
 | **Backend** | Node.js, Express.js, JSON Web Tokens (JWT), Multer, Dotenv |
 | **Database** | PostgreSQL (`pg`), relational schema with indexed maturity dates |
-| **AI / OCR** | Multimodal Vision-Language Model (VLM / Gemini SDK) & Intelligent Document Processing |
+| **AI / OCR** | Multimodal Vision-Language Model (VLM) & Intelligent Document Processing |
 | **Communication** | Nodemailer (SMTP), MSG91 Flow API (SMS), Twilio Client (WhatsApp) |
 | **Internationalization** | Custom Bhashini i18n Context supporting 7 Indian languages |
 
@@ -125,7 +125,7 @@ flowchart TD
 ### Prerequisites
 - Node.js (v18 or higher)
 - PostgreSQL (v14 or higher) running locally or in cloud
-- Google Gemini API Key
+- Vision AI / OCR API Key
 
 ### 1. Clone the Repository
 ```bash
@@ -140,7 +140,7 @@ npm install
 
 # Configure environment variables
 cp .env.example .env
-# Edit .env with your PostgreSQL credentials & GEMINI_API_KEY
+# Edit .env with your PostgreSQL credentials & API keys
 
 # Initialize database schema and seed data
 psql -U postgres -d fdr_shield_db -f database.sql
@@ -168,7 +168,7 @@ Visit **`http://localhost:3000`** in your browser.
 | :--- | :--- | :--- | :--- |
 | `/api/auth/login` | POST | Public | Authenticates user and returns signed JWT token |
 | `/api/fdrs` | GET | Public/Auth | Fetches active portfolio FDR records with pagination and filters |
-| `/api/fdrs` | POST | College/Officer | Submits a new FDR with receipt attachment & Gemini OCR trigger |
+| `/api/fdrs` | POST | College/Officer | Submits a new FDR with receipt attachment & automated OCR trigger |
 | `/api/fdrs/:id/decision` | PATCH | Officer | Records verification audit decision (Approve/Reject/Flag) |
 | `/api/institutions` | GET | Auth | Lists registered AICTE-affiliated institutions |
 | `/api/alerts/cron` | POST | Admin/System | Manually triggers the automated maturity alert scan |
