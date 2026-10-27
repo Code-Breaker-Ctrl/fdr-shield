@@ -367,8 +367,27 @@ function PageHeading({ eyebrow, title, description, children }: { eyebrow: strin
 function PrimaryButton({ children, onClick, secondary = false }: { children: React.ReactNode; onClick: () => void; secondary?: boolean }) {
   return <button className={`button ${secondary ? "button-secondary" : "button-primary"}`} onClick={onClick}>{children}</button>;
 }
-function StatusChip({ status }: { status: WorkflowStatus }) { return <span className={`status-chip ${status}`}>{statusLabel(status)}</span>; }
-function RiskPill({ record }: { record: FdrRecord }) { return <span className={`risk-pill ${riskClass(record)}`}><span className="risk-dot" />{maturityLabel(record)}</span>; }
+function StatusChip({ status }: { status: WorkflowStatus }) {
+  const { t } = useLanguage();
+  const getStatusText = (s: WorkflowStatus) => {
+    switch (s) {
+      case "approved": return t("approved");
+      case "under_review": return t("underReview");
+      case "rejected": return t("rejected");
+      default: return t("pending");
+    }
+  };
+  return <span className={`status-chip ${status}`}>{getStatusText(status)}</span>;
+}
+function RiskPill({ record }: { record: FdrRecord }) {
+  const { t } = useLanguage();
+  const days = daysUntil(record.maturityDate);
+  let label = `${days} ${t("daysRemaining")}`;
+  if (days < 0) label = `${t("overdueBy")} ${Math.abs(days)}d`;
+  else if (days === 0) label = t("maturesToday");
+
+  return <span className={`risk-pill ${riskClass(record)}`}><span className="risk-dot" />{label}</span>;
+}
 function EmptyState({ title, copy, icon = <FileText size={22} /> }: { title: string; copy: string; icon?: React.ReactNode }) {
   return <div className="empty-state"><div className="empty-icon">{icon}</div><strong>{title}</strong><span>{copy}</span></div>;
 }
@@ -378,59 +397,60 @@ function OverviewPage({ records, priorityRecords, demo, currentDate, maturingCou
   records: FdrRecord[]; priorityRecords: FdrRecord[]; demo: boolean; currentDate: string; maturingCount: number; overdueCount: number;
   onSelect: (id: string) => void; onAdd: () => void; onGo: (path: string) => void;
 }) {
+  const { t } = useLanguage();
   const flaggedCount = records.filter(record => isOpen(record) && (record.mismatchFields.length || !record.hasDocument)).length;
   const institutionCount = new Set(records.map(record => record.institution)).size;
   const principalOnFile = records.reduce((sum, record) => sum + Number(record.amount || 0), 0);
   const openCount = records.filter(isOpen).length;
 
   return <>
-    <PageHeading eyebrow="PORTFOLIO POSITION" title="FDR risk monitoring" description="Deposits on record, ranked by maturity date and verification risk.">
-      <span className="as-of-note"><span>AS AT</span>{currentDate}</span>
-      <button className="button button-primary" onClick={onAdd}><Upload size={16} /> Submit FDR</button>
+    <PageHeading eyebrow={t("portfolioPosition")} title={t("fdrRiskMonitoring")} description={t("fdrRiskDesc")}>
+      <span className="as-of-note"><span>{t("asAt")}</span>{currentDate}</span>
+      <button className="button button-primary" onClick={onAdd}><Upload size={16} /> {t("submitFdr")}</button>
     </PageHeading>
 
     <section className="position-register" aria-label="Portfolio totals and open risk counts">
       <button className="principal-figure" onClick={() => onGo("/register")}>
-        <span className="measure-label">PRINCIPAL ON FILE</span>
+        <span className="measure-label">{t("principalOnFile")}</span>
         <strong>{formatAmount(principalOnFile)}</strong>
-        <small>{records.length} receipt{records.length === 1 ? "" : "s"} across {institutionCount} institution{institutionCount === 1 ? "" : "s"}</small>
+        <small>{records.length} {t("receiptsCount")} {institutionCount} {t("institutionsCount")}</small>
       </button>
       <button className="position-measure" onClick={() => onGo("/alerts")}>
-        <span className="measure-label">MATURING · 30 DAYS</span>
+        <span className="measure-label">{t("maturing30Days")}</span>
         <strong>{maturingCount.toLocaleString("en-IN")}</strong>
-        <small>Upcoming maturities</small>
+        <small>{t("upcomingMaturities")}</small>
       </button>
       <button className="position-measure" onClick={() => onGo("/verification")}>
-        <span className="measure-label">NEEDS VERIFICATION</span>
+        <span className="measure-label">{t("needsVerification")}</span>
         <strong>{flaggedCount.toLocaleString("en-IN")}</strong>
-        <small>Missing receipt or field flag</small>
+        <small>{t("missingReceiptOrFlag")}</small>
       </button>
       <button className={`position-measure overdue-measure ${overdueCount ? "has-overdue" : ""}`} onClick={() => onGo("/alerts")}>
-        <span className="measure-label">OVERDUE</span>
+        <span className="measure-label">{t("overdue")}</span>
         <strong>{overdueCount.toLocaleString("en-IN")}</strong>
-        <small>{overdueCount ? "Review without delay" : "No overdue requests"}</small>
+        <small>{overdueCount ? t("reviewWithoutDelay") : t("noOverdue")}</small>
       </button>
     </section>
 
     <section className="priority-panel">
       <div className="watchlist-heading">
         <div>
-          <span className="watchlist-reference">01 / OPEN REGISTER</span>
-          <h2>Resolve these first</h2>
-          <p>{openCount} open request{openCount === 1 ? "" : "s"} · ordered by maturity and verification risk</p>
+          <span className="watchlist-reference">{t("openRegisterRef")}</span>
+          <h2>{t("resolveTheseFirst")}</h2>
+          <p>{openCount} {t("openRequestsOrdered")}</p>
         </div>
-        <button className="text-button" onClick={() => onGo("/register")}>Full register <ArrowRight size={14} /></button>
+        <button className="text-button" onClick={() => onGo("/register")}>{t("fullRegister")} <ArrowRight size={14} /></button>
       </div>
-      {priorityRecords.length ? <RecordTable records={priorityRecords} compact onSelect={onSelect} /> : <EmptyState title="No records need attention" copy="New receipts and approaching maturities will appear in this register." />}
-      <button className="panel-footer-link" onClick={() => onGo("/register")}>Open all {records.length} FDR records <ArrowRight size={14} /></button>
+      {priorityRecords.length ? <RecordTable records={priorityRecords} compact onSelect={onSelect} /> : <EmptyState title={t("noRecordsAttention")} copy={t("newReceiptsNotice")} />}
+      <button className="panel-footer-link" onClick={() => onGo("/register")}>{t("openAllRecords")} ({records.length}) <ArrowRight size={14} /></button>
     </section>
 
     <div className="lower-registers">
       <MaturityPanel records={records} onGo={onGo} />
       <section className="institution-ledger">
         <div className="module-heading">
-          <div><span className="watchlist-reference">03 / INSTITUTIONS</span><h2>Institutional exposure</h2></div>
-          <button className="text-button" onClick={() => onGo("/institutions")}>All institutions <ArrowRight size={14} /></button>
+          <div><span className="watchlist-reference">{t("institutionalExposureRef")}</span><h2>{t("institutionalExposure")}</h2></div>
+          <button className="text-button" onClick={() => onGo("/institutions")}>{t("allInstitutions")} <ArrowRight size={14} /></button>
         </div>
         <InstitutionSnapshot records={records} onGo={onGo} />
       </section>
@@ -439,6 +459,7 @@ function OverviewPage({ records, priorityRecords, demo, currentDate, maturingCou
 }
 
 function MaturityPanel({ records, onGo }: { records: FdrRecord[]; onGo: (path: string) => void }) {
+  const { t } = useLanguage();
   const windows = [7, 14, 21, 30];
   const counts = windows.map((upper, index) => records.filter(record => {
     const days = daysUntil(record.maturityDate);
@@ -449,8 +470,8 @@ function MaturityPanel({ records, onGo }: { records: FdrRecord[]; onGo: (path: s
 
   return <section className="maturity-ledger">
     <div className="module-heading">
-      <div><span className="watchlist-reference">02 / MATURITY CALENDAR</span><h2>Due in the next 30 days</h2></div>
-      <button className="text-button" onClick={() => onGo("/alerts")}>All alerts <ArrowRight size={14} /></button>
+      <div><span className="watchlist-reference">{t("maturityCalendarRef")}</span><h2>{t("dueNext30Days")}</h2></div>
+      <button className="text-button" onClick={() => onGo("/alerts")}>{t("allAlerts")} <ArrowRight size={14} /></button>
     </div>
     <div className="maturity-schedule" role="img" aria-label={`Maturities by window: ${schedule}`}>
       {counts.map((count, index) => (
@@ -496,16 +517,17 @@ function InstitutionSnapshot({ records, onGo }: { records: FdrRecord[]; onGo: (p
 }
 
 function RecordTable({ records, compact = false, onSelect }: { records: FdrRecord[]; compact?: boolean; onSelect: (id: string) => void }) {
+  const { t } = useLanguage();
   if (!records.length) return <EmptyState title="No records match" copy="Try another search or status filter." />;
   return <div className={`table-wrap ${compact ? "compact-table-wrap" : ""}`}>
     <table className="records-table">
       <thead>
         <tr>
-          <th>INSTITUTION / FDR</th>
-          <th>BANK</th>
-          <th>PRINCIPAL AMOUNT</th>
-          <th>MATURITY</th>
-          <th>STATUS</th>
+          <th>{t("thInstitutionFdr")}</th>
+          <th>{t("thBank")}</th>
+          <th>{t("thPrincipalAmount")}</th>
+          <th>{t("thMaturity")}</th>
+          <th>{t("thStatus")}</th>
           {!compact && <th />}
         </tr>
       </thead>
@@ -528,7 +550,7 @@ function RecordTable({ records, compact = false, onSelect }: { records: FdrRecor
             <td data-label="Maturity"><span className="date-cell">{formatDate(record.maturityDate)}</span><RiskPill record={record} /></td>
             <td data-label="Status">
               <StatusChip status={record.workflowStatus} />
-              {record.mismatchFields.length > 0 && <span className="table-flag"><AlertTriangle size={12} /> {record.mismatchFields.length} flag{record.mismatchFields.length > 1 ? "s" : ""}</span>}
+              {record.mismatchFields.length > 0 && <span className="table-flag"><AlertTriangle size={12} /> {record.mismatchFields.length} {record.mismatchFields.length > 1 ? t("flags") : t("flag")}</span>}
             </td>
             {!compact && <td><button className="icon-button row-open" aria-label={`Open ${record.fdrNumber}`} onClick={() => onSelect(record.id)}><ChevronRight size={16} /></button></td>}
           </tr>
