@@ -13,14 +13,14 @@ Every technical institution affiliated with the **All India Council for Technica
 3. **Communication Friction:** Over-reliance on postal mail or missed phone calls without delivery tracking.
 4. **Lack of Regional Language Support:** College registrars across India face language barriers on central portals.
 
-**AICTE FDR Shield** resolves these challenges with an end-to-end automated platform featuring **Gemini AI Optical Character Recognition (OCR)**, a **human-in-the-loop verification desk**, **automated tri-channel regulatory escalation (Email, SMS, WhatsApp)**, and a **Digital India Bhashini-compliant multilingual suite**.
+**AICTE FDR Shield** resolves these challenges with an end-to-end automated platform featuring **Multimodal Vision AI Document Verification**, a **human-in-the-loop verification desk**, **automated tri-channel regulatory escalation (Email, SMS, WhatsApp)**, and a **Digital India Bhashini-compliant multilingual suite**.
 
 ---
 
 ## 🌟 Key Modules & Innovations
 
-### 1. 🤖 Gemini AI Document Verification & Tamper Detection
-- When an institution uploads an FDR receipt (PDF/Image), Google's Gemini multimodal AI extracts critical metadata:
+### 1. 🤖 Multimodal Vision AI & Tamper Detection Engine
+- When an institution uploads an FDR receipt (PDF/Image), an automated Vision-Language Model (VLM) pipeline extracts critical metadata:
   - FDR Certificate Number
   - Issuing Bank & Branch
   - Deposit Principal Amount
@@ -114,7 +114,7 @@ flowchart TD
 | **Frontend** | React 18, Vite, TypeScript, Tailwind CSS, Lucide Icons, Wouter, Sonner |
 | **Backend** | Node.js, Express.js, JSON Web Tokens (JWT), Multer, Dotenv |
 | **Database** | PostgreSQL (`pg`), relational schema with indexed maturity dates |
-| **AI / OCR** | Google Gemini multimodal AI SDK (`@google/genai`) |
+| **AI / OCR** | Multimodal Vision-Language Model (VLM / Gemini SDK) & Intelligent Document Processing |
 | **Communication** | Nodemailer (SMTP), MSG91 Flow API (SMS), Twilio Client (WhatsApp) |
 | **Internationalization** | Custom Bhashini i18n Context supporting 7 Indian languages |
 
