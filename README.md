@@ -175,7 +175,7 @@ Visit **`http://localhost:3000`** in your browser.
 
 ---
 
-## 👥 Team Ctrl+Alt+Elite (SIH 2026)
+## 👥 Team Flux (SIH 2026)
 - **Problem Statement ID:** 26265
 - **Category:** Software
 - **Theme:** Smart Automation
