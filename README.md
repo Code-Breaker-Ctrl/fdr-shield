@@ -76,13 +76,13 @@ flowchart TD
 
     subgraph Backend ["Backend (Node.js + Express)"]
         API["REST API Layer & JWT Auth"]
-        OCR["Gemini AI OCR Extraction Engine"]
+        OCR["Multimodal Vision AI Extraction Engine"]
         Cron["Automated Nightly Cron Daemon"]
         Alerts["Tri-Channel Dispatch Service"]
     end
 
     subgraph ThirdParty ["External Gateways"]
-        Gemini["Google Gemini 2.5 Flash"]
+        VLM["Multimodal Vision-Language Model (VLM API)"]
         SMTP["Nodemailer SMTP (Email)"]
         SMS["MSG91 Flow (SMS)"]
         WA["Twilio API (WhatsApp)"]
@@ -97,7 +97,7 @@ flowchart TD
     Drawer --> API
     API --> DB
     API --> OCR
-    OCR --> Gemini
+    OCR --> VLM
     Cron --> Alerts
     Alerts --> SMTP
     Alerts --> SMS

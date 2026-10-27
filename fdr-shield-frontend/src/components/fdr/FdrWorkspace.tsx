@@ -594,11 +594,12 @@ function RegisterPage({ records, isAdmin, demo, query, setQuery, statusFilter, s
 }
 
 function VerificationPage({ records, demo, onSelect }: { records: FdrRecord[]; demo: boolean; onSelect: (id: string) => void }) {
+  const { t } = useLanguage();
   return <>
-    <PageHeading eyebrow="HUMAN VERIFICATION" title="Verification queue" description="Resolve mismatches, missing receipts and uncertain document extractions before final approval." />
+    <PageHeading eyebrow={t("humanVerification")} title={t("verificationQueue")} description={t("verificationDesc")} />
     <div className="verification-context">
-      <span className="watchlist-reference">{String(records.length).padStart(2, "0")} OPEN EXCEPTIONS</span>
-      <span>Each resolution is attributed to an official and recorded in the approval trail.</span>
+      <span className="watchlist-reference">{String(records.length).padStart(2, "0")} {t("openExceptions")}</span>
+      <span>{t("verificationTrail")}</span>
     </div>
     <div className="verification-list">
       {records.map((record, index) => (
@@ -608,15 +609,15 @@ function VerificationPage({ records, demo, onSelect }: { records: FdrRecord[]; d
             <div className="verification-title"><strong>{record.fdrNumber}</strong><span className="muted-separator">·</span><span>{record.institution}</span></div>
             <div className="verification-meta">
               <span>{record.bankName}</span>
-              <span>Submitted {formatDate(record.createdAt)}</span>
-              <span>{record.hasDocument ? "Receipt attached" : "Receipt missing"}</span>
+              <span>{t("submitted")} {formatDate(record.createdAt)}</span>
+              <span>{record.hasDocument ? t("receiptAttached") : t("receiptMissing")}</span>
             </div>
             <div className="flag-chips">
               {record.mismatchFields.length ? record.mismatchFields.map(field => (
                 <span className="field-flag" key={field}>
-                  <AlertCircle size={12} /> {field === "fdrNumber" ? "FDR number" : field === "bankName" ? "Bank" : field === "amount" ? "Amount" : field === "maturityDate" ? "Maturity date" : field === "document" ? "Missing document" : field === "ocr" ? "OCR unavailable" : field}
+                  <AlertCircle size={12} /> {field === "fdrNumber" ? t("flagFdrNumber") : field === "bankName" ? t("flagBank") : field === "amount" ? t("flagAmount") : field === "maturityDate" ? t("flagMaturityDate") : field === "document" ? t("flagMissingDoc") : field === "ocr" ? t("flagOcrUnavailable") : field}
                 </span>
-              )) : <span className="field-flag quiet"><CheckCircle2 size={12} /> No field mismatch</span>}
+              )) : <span className="field-flag quiet"><CheckCircle2 size={12} /> {t("noFieldMismatch")}</span>}
             </div>
           </div>
           <div className="verification-side">
@@ -626,13 +627,14 @@ function VerificationPage({ records, demo, onSelect }: { records: FdrRecord[]; d
           </div>
         </button>
       ))}
-      {!records.length && <section className="panel"><EmptyState title="Verification queue is clear" copy="New discrepancies and missing documents will be listed here." icon={<CheckCircle2 size={22} />} /></section>}
+      {!records.length && <section className="panel"><EmptyState title={t("verificationQueueClear")} copy={t("verificationQueueClearDesc")} icon={<CheckCircle2 size={22} />} /></section>}
     </div>
     {demo && <div className="read-only-footnote"><LockKeyhole size={14} /> These are illustrative preview records. Sign in to access official submissions.</div>}
   </>;
 }
 
 function InstitutionsPage({ records, onSelectRecord }: { records: FdrRecord[]; onSelectRecord: (id: string) => void }) {
+  const { t } = useLanguage();
   const groups = useMemo(() => {
     const map = new Map<string, FdrRecord[]>();
     records.forEach(record => map.set(record.institution, [...(map.get(record.institution) ?? []), record]));
@@ -646,29 +648,29 @@ function InstitutionsPage({ records, onSelectRecord }: { records: FdrRecord[]; o
   }, [records]);
 
   return <>
-    <PageHeading eyebrow="INSTITUTIONAL REGISTER" title="Institutions" description="Ranked by unresolved risk and principal. Open an FDR number to inspect its record." />
+    <PageHeading eyebrow={t("institutionalRegister")} title={t("institutions")} description={t("institutionsDesc")} />
     <div className="institution-ledger-header" aria-hidden="true">
-      <span>INSTITUTION / NEXT MATURITY</span>
-      <span>PRINCIPAL</span>
-      <span>RECEIPTS / APPROVED</span>
-      <span>OPEN ATTENTION</span>
-      <span>FDR REFERENCES</span>
+      <span>{t("thInstitutionNextMaturity")}</span>
+      <span>{t("thPrincipal")}</span>
+      <span>{t("thReceiptsApproved")}</span>
+      <span>{t("thOpenAttention")}</span>
+      <span>{t("thFdrReferences")}</span>
     </div>
     <div className="institution-ledger-list">
       {groups.map((group, index) => (
         <article className="institution-ledger-row" key={group.institution}>
           <div className="institution-ledger-name">
             <span className="institution-index">{String(index + 1).padStart(2, "0")}</span>
-            <span><strong>{group.institution}</strong><small>Next maturity · {formatDate(group.next)}</small></span>
+            <span><strong>{group.institution}</strong><small>{t("nextMaturityPrefix")} {formatDate(group.next)}</small></span>
           </div>
           <div className="institution-ledger-stat" data-label="Principal"><strong>{formatAmount(group.total)}</strong></div>
           <div className="institution-ledger-stat" data-label="Receipts / approved">
-            <strong>{group.items.length} FDR{group.items.length === 1 ? "" : "s"}</strong>
-            <small>{group.items.filter(item => item.workflowStatus === "approved").length} approved</small>
+            <strong>{group.items.length} {t("fdrsCount")}</strong>
+            <small>{group.items.filter(item => item.workflowStatus === "approved").length} {t("approvedCountSuffix")}</small>
           </div>
           <div className={`institution-ledger-stat ${group.urgent ? "has-urgent" : ""}`} data-label="Open attention">
-            <strong>{group.urgent ? `${group.urgent} urgent` : "None"}</strong>
-            <small>{group.urgent ? "Priority review required" : "No immediate flag"}</small>
+            <strong>{group.urgent ? `${group.urgent} ${t("urgentSuffix")}` : t("noneLabel")}</strong>
+            <small>{group.urgent ? t("priorityReviewRequired") : t("noImmediateFlag")}</small>
           </div>
           <div className="institution-record-links" data-label="FDR references">
             {group.items.map(item => (
@@ -686,14 +688,15 @@ function InstitutionsPage({ records, onSelectRecord }: { records: FdrRecord[]; o
 }
 
 function AlertsPage({ records, settings, onSelect, onConfigure }: { records: FdrRecord[]; settings: FdrSettings; onSelect: (id: string) => void; onConfigure: () => void }) {
+  const { t } = useLanguage();
   const alerts = records.flatMap(record => {
     const days = daysUntil(record.maturityDate);
     const escalated = isOpen(record) && pendingDays(record) >= settings.escalationAfterDays;
     const candidates = [
-      days < 0 && isOpen(record) ? { type: "overdue", title: "Maturity date passed", description: `Maturity passed ${Math.abs(days)} days ago. Follow-up is overdue.`, level: "critical" } : null,
-      record.mismatchFields.length || !record.hasDocument ? { type: "verification", title: "Verification unresolved", description: `${record.mismatchFields.length ? record.mismatchFields.length + " discrepancy flag(s)" : "Supporting receipt missing"}. Human review is required.`, level: "high" } : null,
-      days >= 0 && settings.reminderIntervals.includes(days) ? { type: "maturity", title: `Maturity reminder · ${days} days`, description: `FDR matures on ${formatDate(record.maturityDate)}.`, level: days <= 7 ? "high" : "watch" } : null,
-      days > 0 && days <= 30 && !settings.reminderIntervals.includes(days) ? { type: "maturity", title: `Maturity approaching · ${days} days`, description: `FDR matures on ${formatDate(record.maturityDate)}.`, level: days <= 7 ? "high" : "watch" } : null,
+      days < 0 && isOpen(record) ? { type: "overdue", title: t("maturityDatePassed"), description: `${t("overdueBy")} ${Math.abs(days)} days. Follow-up is overdue.`, level: "critical" } : null,
+      record.mismatchFields.length || !record.hasDocument ? { type: "verification", title: t("verificationUnresolved"), description: `${record.mismatchFields.length ? record.mismatchFields.length + " " + (record.mismatchFields.length > 1 ? t("flags") : t("flag")) : t("receiptMissing")}. Human review is required.`, level: "high" } : null,
+      days >= 0 && settings.reminderIntervals.includes(days) ? { type: "maturity", title: `${t("maturityReminderPrefix")} ${days} days`, description: `FDR matures on ${formatDate(record.maturityDate)}.`, level: days <= 7 ? "high" : "watch" } : null,
+      days > 0 && days <= 30 && !settings.reminderIntervals.includes(days) ? { type: "maturity", title: `${t("maturityApproachingPrefix")} ${days} days`, description: `FDR matures on ${formatDate(record.maturityDate)}.`, level: days <= 7 ? "high" : "watch" } : null,
       escalated ? { type: "escalation", title: `Escalated to ${settings.escalationTarget}`, description: `Pending for ${pendingDays(record)} days; rule threshold is ${settings.escalationAfterDays} days.`, level: "critical" } : null,
     ].filter((item): item is { type: string; title: string; description: string; level: string } => Boolean(item));
     return candidates.map(alert => ({ ...alert, record }));
@@ -703,18 +706,18 @@ function AlertsPage({ records, settings, onSelect, onConfigure }: { records: Fdr
   const verificationCount = records.filter(record => isOpen(record) && (record.mismatchFields.length > 0 || !record.hasDocument)).length;
 
   return <>
-    <PageHeading eyebrow="MATURITY & EXCEPTIONS" title="Alerts & escalation" description="Prioritized reminders for maturing deposits, overdue cases and unresolved verification." >
-      <button className="button button-secondary" onClick={onConfigure}><SlidersHorizontal size={16} /> Configure rules</button>
+    <PageHeading eyebrow={t("maturityExceptions")} title={t("alertsEscalation")} description={t("alertsDesc")} >
+      <button className="button button-secondary" onClick={onConfigure}><SlidersHorizontal size={16} /> {t("configureRules")}</button>
     </PageHeading>
     <dl className="alert-keyline">
-      <div className="critical"><dt>High-priority alerts</dt><dd>{criticalCount}</dd></div>
-      <div><dt>Maturing · next 30 days</dt><dd>{maturingCount}</dd></div>
-      <div><dt>Open verifications</dt><dd>{verificationCount}</dd></div>
+      <div className="critical"><dt>{t("highPriorityAlerts")}</dt><dd>{criticalCount}</dd></div>
+      <div><dt>{t("maturingNext30Days")}</dt><dd>{maturingCount}</dd></div>
+      <div><dt>{t("openVerifications")}</dt><dd>{verificationCount}</dd></div>
     </dl>
     <section className="panel alerts-panel">
       <div className="panel-heading">
-        <div><span className="eyebrow">PRIORITY ORDER</span><h2>Actionable alerts</h2><p>Overdue and escalated cases are surfaced first.</p></div>
-        <span className="result-count">{alerts.length} alerts</span>
+        <div><span className="eyebrow">{t("priorityOrder")}</span><h2>{t("actionableAlerts")}</h2><p>{t("actionableAlertsDesc")}</p></div>
+        <span className="result-count">{alerts.length} {t("alertsCountSuffix")}</span>
       </div>
       <div className="alert-list">
         {alerts.map((alert, index) => (
@@ -729,7 +732,7 @@ function AlertsPage({ records, settings, onSelect, onConfigure }: { records: Fdr
             <ChevronRight size={16} />
           </button>
         ))}
-        {!alerts.length && <EmptyState title="No active alerts" copy="Maturity reminders and verification exceptions will appear here." icon={<CheckCircle2 size={22} />} />}
+        {!alerts.length && <EmptyState title={t("noActiveAlerts")} copy={t("noActiveAlertsDesc")} icon={<CheckCircle2 size={22} />} />}
       </div>
     </section>
     <div className="rule-note"><Clock3 size={15} /><span>Reminder intervals: <strong>{settings.reminderIntervals.join(", ")} days before maturity</strong> · Escalation after <strong>{settings.escalationAfterDays} days</strong></span></div>
@@ -737,29 +740,30 @@ function AlertsPage({ records, settings, onSelect, onConfigure }: { records: Fdr
 }
 
 function ReportsPage({ records, total, query, setQuery, statusFilter, setStatusFilter, onDownload }: { records: FdrRecord[]; total: number; query: string; setQuery: (value: string) => void; statusFilter: WorkflowStatus | "all"; setStatusFilter: (value: WorkflowStatus | "all") => void; onDownload: () => void }) {
+  const { t } = useLanguage();
   const outstanding = records.filter(isOpen).length;
   const totalAmount = records.reduce((sum, record) => sum + Number(record.amount || 0), 0);
 
   return <>
-    <PageHeading eyebrow="ADMINISTRATIVE REPORTING" title="Reports" description="Filter the register and download an auditable CSV for administrative review.">
-      <button className="button button-primary" onClick={onDownload}><ArrowDownToLine size={16} /> Download CSV report</button>
+    <PageHeading eyebrow={t("adminReporting")} title={t("reports")} description={t("reportsDesc")}>
+      <button className="button button-primary" onClick={onDownload}><ArrowDownToLine size={16} /> {t("downloadCsvReport")}</button>
     </PageHeading>
     <div className="report-overview">
       <div className="report-intro">
-        <span className="watchlist-reference">CURRENT REGISTER / EXPORT SCOPE</span>
-        <h2>FDR administrative report</h2>
-        <p>Filtered view shown below; export this scope as a UTF-8 CSV.</p>
+        <span className="watchlist-reference">{t("currentRegisterScope")}</span>
+        <h2>{t("fdrAdminReport")}</h2>
+        <p>{t("filteredViewDesc")}</p>
       </div>
       <dl className="report-facts">
-        <div><dt>In scope</dt><dd>{records.length} <small>/ {total}</small></dd></div>
-        <div><dt>Principal represented</dt><dd>{formatAmount(totalAmount)}</dd></div>
-        <div><dt>Open cases</dt><dd>{outstanding}</dd></div>
+        <div><dt>{t("inScope")}</dt><dd>{records.length} <small>/ {total}</small></dd></div>
+        <div><dt>{t("principalRepresented")}</dt><dd>{formatAmount(totalAmount)}</dd></div>
+        <div><dt>{t("openCases")}</dt><dd>{outstanding}</dd></div>
       </dl>
     </div>
     <section className="panel report-filter-panel">
       <div className="panel-heading slim">
-        <div><span className="eyebrow">REPORT FILTERS</span><h2>Choose report scope</h2></div>
-        <button className="button button-secondary" onClick={onDownload}><ArrowDownToLine size={15} /> Export filtered view</button>
+        <div><span className="eyebrow">{t("reportFilters")}</span><h2>{t("chooseReportScope")}</h2></div>
+        <button className="button button-secondary" onClick={onDownload}><ArrowDownToLine size={15} /> {t("exportFilteredView")}</button>
       </div>
       <div className="report-filter-row">
         <label className="filter-search">
@@ -769,11 +773,11 @@ function ReportsPage({ records, total, query, setQuery, statusFilter, setStatusF
         <div className="filter-select-wrap">
           <Filter size={15} />
           <select aria-label="Filter report by status" value={statusFilter} onChange={event => setStatusFilter(event.target.value as WorkflowStatus | "all")}>
-            <option value="all">All statuses</option>
-            <option value="pending">Awaiting review</option>
-            <option value="under_review">Needs verification</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="all">{t("allStatuses")}</option>
+            <option value="pending">{t("awaitingReview")}</option>
+            <option value="under_review">{t("needsVerification")}</option>
+            <option value="approved">{t("approved")}</option>
+            <option value="rejected">{t("rejected")}</option>
           </select>
           <ChevronDown size={14} />
         </div>
@@ -786,6 +790,7 @@ function ReportsPage({ records, total, query, setQuery, statusFilter, setStatusF
 }
 
 function AdministrationPage({ settings, isAdmin, demo, busy, onSave }: { settings: FdrSettings; isAdmin: boolean; demo: boolean; busy: boolean; onSave: (value: { reminderIntervals: number[]; escalationAfterDays: number; escalationTarget: string }) => Promise<void> }) {
+  const { t } = useLanguage();
   const [intervals, setIntervals] = useState<number[]>(settings.reminderIntervals);
   const [escalationAfterDays, setEscalationAfterDays] = useState(settings.escalationAfterDays);
   const [escalationTarget, setEscalationTarget] = useState(settings.escalationTarget);
@@ -807,7 +812,7 @@ function AdministrationPage({ settings, isAdmin, demo, busy, onSave }: { setting
   }
 
   return <>
-    <PageHeading eyebrow="ADMINISTRATION" title="Alert rules & controls" description="Configure maturity reminders, escalation thresholds and workspace authority." />
+    <PageHeading eyebrow={t("administration")} title={t("alertRulesControls")} description={t("adminDesc")} />
     {demo && <div className="permission-banner"><LockKeyhole size={17} /><span>Sign in with an authorized administrator account to configure rules.</span></div>}
     {!demo && !isAdmin && <div className="permission-banner"><ShieldCheck size={17} /><span>Configuration is restricted to authorized administrators. Your account can submit FDR records.</span></div>}
     <div className="settings-layout">
@@ -815,13 +820,13 @@ function AdministrationPage({ settings, isAdmin, demo, busy, onSave }: { setting
         <section className="panel settings-card">
           <div className="settings-card-heading">
             <span className="settings-icon teal"><Bell size={19} /></span>
-            <div><span className="eyebrow">MATURITY REMINDERS</span><h2>Reminder schedule</h2><p>Show in-app prompts at the selected number of days before maturity.</p></div>
+            <div><span className="eyebrow">{t("maturityReminders")}</span><h2>{t("reminderSchedule")}</h2><p>{t("reminderScheduleDesc")}</p></div>
           </div>
           <div className="reminder-options">
             {options.map(day => (
               <button key={day} className={`reminder-option ${intervals.includes(day) ? "selected" : ""}`} disabled={!isAdmin || demo} onClick={() => toggle(day)}>
                 <span className="check-square">{intervals.includes(day) && <Check size={13} />}</span>
-                <span><strong>{day} days before</strong><small>{day === 30 ? "Plan next steps" : day === 15 ? "Confirm instructions" : day === 7 ? "Action due soon" : day === 3 ? "Final reminder" : "Maturity day eve"}</small></span>
+                <span><strong>{day} {t("daysBefore")}</strong><small>{day === 30 ? "Plan next steps" : day === 15 ? "Confirm instructions" : day === 7 ? "Action due soon" : day === 3 ? "Final reminder" : "Maturity day eve"}</small></span>
               </button>
             ))}
           </div>
@@ -831,34 +836,34 @@ function AdministrationPage({ settings, isAdmin, demo, busy, onSave }: { setting
         <section className="panel settings-card">
           <div className="settings-card-heading">
             <span className="settings-icon amber"><AlertTriangle size={19} /></span>
-            <div><span className="eyebrow">ADMINISTRATIVE ESCALATION</span><h2>Pending case escalation</h2><p>Set when unresolved cases should be highlighted for the next administrative level.</p></div>
+            <div><span className="eyebrow">{t("adminEscalation")}</span><h2>{t("pendingCaseEscalation")}</h2><p>{t("pendingCaseEscalationDesc")}</p></div>
           </div>
           <div className="form-grid settings-form">
             <label className="field">
-              <span>Escalate after</span>
+              <span>{t("escalateAfter")}</span>
               <div className="select-field">
                 <select value={escalationAfterDays} disabled={!isAdmin || demo} onChange={event => setEscalationAfterDays(Number(event.target.value))}>
-                  <option value={3}>3 calendar days</option>
-                  <option value={5}>5 calendar days</option>
-                  <option value={7}>7 calendar days</option>
-                  <option value={10}>10 calendar days</option>
-                  <option value={14}>14 calendar days</option>
+                  <option value={3}>3 {t("calendarDays")}</option>
+                  <option value={5}>5 {t("calendarDays")}</option>
+                  <option value={7}>7 {t("calendarDays")}</option>
+                  <option value={10}>10 {t("calendarDays")}</option>
+                  <option value={14}>14 {t("calendarDays")}</option>
                 </select>
                 <ChevronDown size={15} />
               </div>
             </label>
-            <label className="field"><span>Escalation recipient / role</span><input value={escalationTarget} disabled={!isAdmin || demo} onChange={event => setEscalationTarget(event.target.value)} maxLength={200} placeholder="e.g. Regional Finance Officer" /></label>
+            <label className="field"><span>{t("escalationRole")}</span><input value={escalationTarget} disabled={!isAdmin || demo} onChange={event => setEscalationTarget(event.target.value)} maxLength={200} placeholder="e.g. Regional Finance Officer" /></label>
           </div>
           <div className="escalation-preview">
             <span className="escalation-preview-icon"><ArrowUpRight size={17} /></span>
-            <span><strong>Escalation rule preview</strong><small>Open cases pending {escalationAfterDays}+ days are flagged for {escalationTarget || "the assigned role"}.</small></span>
+            <span><strong>{t("escalationPreview")}</strong><small>Open cases pending {escalationAfterDays}+ days are flagged for {escalationTarget || "the assigned role"}.</small></span>
           </div>
         </section>
 
         <section className="panel settings-card">
           <div className="settings-card-heading">
             <span className="settings-icon blue"><ShieldCheck size={19} /></span>
-            <div><span className="eyebrow">APPROVAL CONTROL</span><h2>Role-gated decisions</h2><p>Approval permissions are enforced by the server on every decision.</p></div>
+            <div><span className="eyebrow">{t("approvalControl")}</span><h2>{t("roleGatedDecisions")}</h2><p>Approval permissions are enforced by the server on every decision.</p></div>
           </div>
           <div className="control-rows">
             <div><span className="control-icon"><UserRound size={16} /></span><span><strong>Authorized users</strong><small>Submit FDRs and view workflow records</small></span><span className="control-state">Enabled</span></div>
