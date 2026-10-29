@@ -1,50 +1,55 @@
 # AICTE FDR Shield 🛡️
 > **Automated Security Deposit & Fixed Deposit Receipt (FDR) Monitoring Platform**  
 > *Developed for Smart India Hackathon (SIH) 2026 | Problem Statement ID: 26265 | Theme: Smart Automation*  
-> *Team: Flux*
+> **Team Name:** FLUXDCE | **Team ID:** 199409 | **Category:** Software | **Institution:** Dronacharya College of Engineering (DCE)
+
+[![Demo Video](https://img.shields.io/badge/Demo_Video-Watch_on_YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/_q_NSYcsIc8?si=9OHKo1z36eukq9Sj)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/Code-Breaker-Ctrl/fdr-shield)
+[![SIH Problem Statement](https://img.shields.io/badge/SIH_2026-PS_26265-orange?style=for-the-badge)](https://sih.gov.in)
 
 ---
 
 ## 📌 Executive Summary
 
-Every technical institution affiliated with the **All India Council for Technical Education (AICTE)** is mandated to maintain security deposits via Fixed Deposit Receipts (FDRs) under joint names with AICTE. Historically, managing thousands of paper and digital FDR certificates across hundreds of banks has suffered from:
-1. **Manual Ingestion & Human Error:** Discrepancies between physical receipts and online claims.
-2. **Lapsed Maturity & Revenue Leakage:** FDRs maturing unnoticed, resulting in lost auto-rollover interest or uncollected penalties.
-3. **Communication Friction:** Over-reliance on postal mail or missed phone calls without delivery tracking.
-4. **Lack of Regional Language Support:** College registrars across India face language barriers on central portals.
+Every technical institution affiliated with the **All India Council for Technical Education (AICTE)** is mandated to maintain security deposits via Fixed Deposit Receipts (FDRs) lodged under joint names with AICTE. Historically, managing thousands of paper and digital FDR certificates across hundreds of scheduled commercial banks has suffered from:
+1. **Manual Ingestion & Human Error:** Discrepancies between physical deposit slips and online regulatory entries.
+2. **Missed Maturity Dates & Revenue Leakage:** FDRs maturing unnoticed, leading to delayed renewals, uncollected penalties, or compliance lapses.
+3. **Communication Friction:** Over-reliance on postal mail or missed phone calls without verified delivery tracking.
+4. **Lack of Regional Language Support:** College registrars across India face language barriers on central English-only portals.
 
-**AICTE FDR Shield** resolves these challenges with an end-to-end automated platform featuring **Multimodal Vision AI Document Verification**, a **human-in-the-loop verification desk**, **automated tri-channel regulatory escalation (Email, SMS, WhatsApp)**, and a **Digital India Bhashini-compliant multilingual suite**.
+**AICTE FDR Shield** resolves these challenges with an end-to-end automated platform featuring **Multimodal Vision AI Document Verification**, a **human-in-the-loop verification queue**, **automated tri-channel regulatory escalation (Email, SMS, WhatsApp)**, and a **Digital India Bhashini-compliant multilingual suite**.
 
 ---
 
 ## 🌟 Key Modules & Innovations
 
-### 1. 🤖 Multimodal Vision AI & Tamper Detection Engine
-- When an institution uploads an FDR receipt (PDF/Image), an automated Vision-Language Model (VLM) pipeline extracts critical metadata:
+### 1. 🤖 Multimodal Vision AI & Document Verification
+- When an institution uploads an FDR receipt (PDF or Image), an intelligent document processing (IDP) Vision model extracts critical metadata:
   - FDR Certificate Number
   - Issuing Bank & Branch
   - Deposit Principal Amount
   - Issue Date & Scheduled Maturity Date
   - Joint Ownership Clause (`AICTE & Institution Name`)
-- The system performs automated cross-field reconciliation against the institution's self-entered form data, flagging discrepancies (e.g. ₹20,00,000 entered vs ₹25,00,000 on receipt) with confidence scores.
+- Performs automated cross-field reconciliation against self-entered data, highlighting field-by-field discrepancies with confidence scores.
+- *Regulatory note: AI extraction flags mismatched fields for officer review; final regulatory approval remains strictly with authorized administrators.*
 
-### 2. ⚖️ Human-in-the-Loop Verification Queue
-- AICTE desk officers review flagged discrepancies via an interactive side-by-side audit drawer.
-- Officers can approve, reject, request clarification, or flag deposits for compliance action with an immutable audit log.
+### 2. ⚖️ Human-in-the-Loop Verification Queue & Audit Drawer
+- AICTE desk scrutiny officers review flagged submissions via an interactive side-by-side reconciliation drawer.
+- Officers can approve, reject, or request clarification, with every administrative decision appended to an immutable, timestamped audit trail.
 
-### 3. 🚨 Tri-Channel Automated Regulatory Escalation
+### 3. 🚨 Tri-Channel Automated Regulatory Escalation Engine
 - A scheduled cron daemon scans maturity dates nightly and triggers automated alerts:
   - **30 Days Remaining:** Initial renewal reminder.
   - **15 Days Remaining:** Urgent compliance notice.
   - **7 Days Remaining:** Critical regulatory alert with forfeiture warning.
   - **Overdue:** Automatic non-compliance flag.
-- **Dispatch Channels:**
-  - **Official AICTE HTML Email** via Nodemailer SMTP with national emblem styling and one-click portal login.
-  - **Priority SMS** via MSG91 Flow API.
-  - **Verified WhatsApp Business Notice** via Twilio.
+- **Dispatch Gateways:**
+  - **Official AICTE HTML Email** via Nodemailer SMTP with national emblem styling and direct portal login buttons.
+  - **Priority SMS** via MSG91 Flow Gateway.
+  - **Verified WhatsApp Business Notice** via Twilio with instant submission links.
 
 ### 4. 🌐 Digital India Bhashini Multilingual Suite
-- Integrated multilingual support for **7 Indian Scheduled Languages**:
+- Integrated multilingual support for **7 Scheduled Indian Languages**:
   - English (`en`)
   - हिन्दी (Hindi - `hi`)
   - मराठी (Marathi - `mr`)
@@ -52,14 +57,30 @@ Every technical institution affiliated with the **All India Council for Technica
   - తెలుగు (Telugu - `te`)
   - ગુજરાતી (Gujarati - `gu`)
   - বাংলা (Bengali - `bn`)
-- Instant client-side switching with persistent language preference.
+- Instant client-side switching with persistent language preference across all 7 workspace tabs.
 
-### 5. 📊 Executive Portfolio Intelligence
+### 5. 📊 Executive Portfolio Intelligence & Reports
 - Single-pane-of-glass dashboard displaying:
   - Total security funds under guard (₹ Cr).
-  - 30-day liquidity and maturity pipeline.
-  - Issuing bank distribution (SBI, HDFC, PNB, Canara, ICICI).
-  - Automated CSV register export for administrative reporting.
+  - 30-day liquidity and upcoming maturity timeline.
+  - Issuing bank distribution (SBI, HDFC, PNB, Canara, Axis, etc.).
+  - Filtered administrative CSV report export for official record-keeping.
+
+---
+
+## 📊 Comparative Analysis
+
+| Key Feature | AICTE Approval Portal | SBI YONO FD | HDFC NetBanking | FDR SHIELD (Team FLUX) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Online FDR-Related Services** | ✅ | ✅ | ✅ | **✅** |
+| **Maturity Date Visibility** | ❌ | ✅ | ✅ | **✅** |
+| **AI/OCR Document Extraction** | ❌ | ❌ | ❌ | **✅** |
+| **Automatic Discrepancy Detection** | ❌ | ❌ | ❌ | **✅** |
+| **Configurable Regulatory Maturity Alerts** | ❌ | ❌ | ❌ | **✅** |
+| **Institution-Wise Risk Dashboard** | ❌ | ❌ | ❌ | **✅** |
+| **Multi-Channel Dispatch (Email/SMS/WhatsApp)** | ❌ | ❌ | ❌ | **✅** |
+| **Timestamped Multi-Level Approval Trail** | ❌ | ❌ | ❌ | **✅** |
+| **Bhashini 7-Language Indian Localization** | ❌ | ❌ | ❌ | **✅** |
 
 ---
 
@@ -81,15 +102,15 @@ flowchart TD
         Alerts["Tri-Channel Dispatch Service"]
     end
 
-    subgraph ThirdParty ["External Gateways"]
-        VLM["Multimodal Vision-Language Model (VLM API)"]
-        SMTP["Nodemailer SMTP (Email)"]
-        SMS["MSG91 Flow (SMS)"]
-        WA["Twilio API (WhatsApp)"]
+    subgraph ExternalGateways ["External Gateways"]
+        VLM["Multimodal Vision AI & IDP Engine"]
+        SMTP["Nodemailer SMTP (Official AICTE HTML Email)"]
+        SMS["MSG91 Flow (SMS Alerts)"]
+        WA["Twilio API (WhatsApp Verified Notices)"]
     end
 
     subgraph Database ["Data Store (PostgreSQL)"]
-        DB[("fdr_shield_db<br/>- institutions<br/>- fdrs<br/>- alerts<br/>- users")]
+        DB[("fdr_shield_db<br/>- institutions<br/>- fdrs<br/>- alerts<br/>- users<br/>- audit_logs")]
     end
 
     UI --> API
@@ -114,26 +135,34 @@ flowchart TD
 | **Frontend** | React 18, Vite, TypeScript, Tailwind CSS, Lucide Icons, Wouter, Sonner |
 | **Backend** | Node.js, Express.js, JSON Web Tokens (JWT), Multer, Dotenv |
 | **Database** | PostgreSQL (`pg`), relational schema with indexed maturity dates |
-| **AI / OCR** | Multimodal Vision-Language Model (VLM) & Intelligent Document Processing |
+| **AI / OCR** | Multimodal Vision AI & Intelligent Document Processing (IDP) |
 | **Communication** | Nodemailer (SMTP), MSG91 Flow API (SMS), Twilio Client (WhatsApp) |
 | **Internationalization** | Custom Bhashini i18n Context supporting 7 Indian languages |
+| **Task Automation** | `node-cron` nightly automated maturity and alert daemon |
 
 ---
 
-## 🚀 Quickstart & Local Setup
+## 🚀 Quickstart & Single-Click Launch
 
-### Prerequisites
-- Node.js (v18 or higher)
-- PostgreSQL (v14 or higher) running locally or in cloud
-- Vision AI / OCR API Key
+### Option A: Windows Single-Click Launch (Easiest)
+Simply double-click **`start.bat`** in the repository root. It will:
+1. Start the Express Backend API on `http://localhost:5000`
+2. Start the Vite React Frontend on `http://localhost:3000`
+3. Automatically open `http://localhost:3000` in your default browser
 
-### 1. Clone the Repository
+To stop services anytime, double-click **`stop.bat`**.
+
+---
+
+### Option B: Manual Setup
+
+#### 1. Clone the Repository
 ```bash
 git clone https://github.com/Code-Breaker-Ctrl/fdr-shield.git
 cd fdr-shield
 ```
 
-### 2. Configure Backend & Database
+#### 2. Configure Backend & Database
 ```bash
 cd fdr-shield-backend
 npm install
@@ -149,7 +178,7 @@ psql -U postgres -d fdr_shield_db -f database.sql
 npm run dev
 ```
 
-### 3. Configure Frontend
+#### 3. Configure Frontend
 ```bash
 cd ../fdr-shield-frontend
 npm install
@@ -175,10 +204,16 @@ Visit **`http://localhost:3000`** in your browser.
 
 ---
 
-## 👥 Team Flux (SIH 2026)
-- **Problem Statement ID:** 26265
-- **Category:** Software
-- **Theme:** Smart Automation
+## 👥 Team FLUXDCE (SIH 2026)
+
+* **Team Name:** FLUXDCE
+* **Team ID:** 199409
+* **Problem Statement ID:** 26265
+* **Problem Statement Title:** Streamline of security deposit/FDR Portal
+* **Theme:** Smart Automation
+* **Category:** Software
+* **Institution:** Dronacharya College of Engineering (DCE)
+* **Demo Video:** [Watch on YouTube](https://youtu.be/_q_NSYcsIc8?si=9OHKo1z36eukq9Sj)
 
 ---
 
